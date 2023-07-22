@@ -67,14 +67,24 @@ fn main() {
     loop {
         println!("== Manage Bills ==");
         println!("1. Add Bill");
-        println!("2. Add Bill");
-        println!("3. Add Bill");
-        println!("4. Add Bill");
-        println!("5. Add Bill\n");
+        println!("2. View Bills");
+        println!("3. Remove Bill");
+        println!("4. Update Bill");
+        println!("5. Bill Total");
+        println!("6. Quit\n");
         println!("Enter Selection:");
 
-        let mut input = String::new();
-        io::stdin().read_line(&mut input)
+        let input = get_selection();
+
+        match input {
+            Some(choice) => {
+                println!("{choice}");
+                if choice == "6" {
+                    break;
+                }
+            },
+            None => println!("Error"),
+        }
         
     }
     bills.push(Bill::new("Insurance".to_owned(), 324.00));
