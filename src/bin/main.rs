@@ -29,8 +29,8 @@
 // * A vector is the easiest way to store the bills at stage 1, but a
 //   hashmap will be easier to work with at stages 2 and 3.
 use std::io;
-
-struct Bill {
+#[derive(Debug, Clone)]
+pub struct Bill {
     bill_name: String,
     bill_amount: f64,
 }
@@ -47,6 +47,28 @@ impl Bill {
         println!("{} - ${}", self.bill_name, self.bill_amount);
     }
 
+}
+
+pub struct Bills {
+    inner: Vec<Bill>,
+}
+
+impl Bills {
+    fn new() -> Self {
+        Self {
+            inner: vec![]
+        }
+    }
+
+    fn add(&mut self, bill: Bill) {
+        self.inner.push(bill);
+    }
+
+    // Returns a vector containing borrowed references to bills
+    fn get_all(&self) -> Vec<&Bill> {
+        // collect will return a new vector with references to the original Bills
+        self.inner.iter().collect()
+    }
 }
 
 fn get_selection() -> Option<String> {
@@ -99,8 +121,6 @@ fn main() {
             Some(MainMenu::ViewBill) => (),
             None => return,
         }
-
-        
     }
     bills.push(Bill::new("Insurance".to_owned(), 324.00));
     bills.push(Bill::new("Mortgage".to_owned(), 1575.00));
