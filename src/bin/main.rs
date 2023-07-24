@@ -61,30 +61,45 @@ fn get_selection() -> Option<String> {
         Some(input)
     }
 }
+
+enum MainMenu {
+    AddBill,
+    ViewBill,
+}
+
+impl MainMenu {
+    fn from_str(input: &str) -> Option<MainMenu> {
+        match input {
+        "1" => Some(Self::AddBill),
+        "2" => Some(Self::ViewBill),
+        _ => None,
+        }
+    }
+
+    fn show() {
+        println!("");
+        println!(" == Bill Manager ==");
+        println!("1. Add Bill");
+        println!("2. View Bill");
+        println!("");
+        println!("Enter Selection: ");
+    }
+}
+
 fn main() {
     let mut bills: Vec<Bill> = vec![];
 
     loop {
-        println!("== Manage Bills ==");
-        println!("1. Add Bill");
-        println!("2. View Bills");
-        println!("3. Remove Bill");
-        println!("4. Update Bill");
-        println!("5. Bill Total");
-        println!("6. Quit\n");
-        println!("Enter Selection:");
+        MainMenu::show();
 
-        let input = get_selection();
+        let input = get_selection().expect("No data entered");
 
-        match input {
-            Some(choice) => {
-                println!("{choice}");
-                if choice == "6" {
-                    break;
-                }
-            },
-            None => println!("Error"),
+        match MainMenu::from_str(input.as_str()) {
+            Some(MainMenu::AddBill) => (),
+            Some(MainMenu::ViewBill) => (),
+            None => return,
         }
+
         
     }
     bills.push(Bill::new("Insurance".to_owned(), 324.00));
