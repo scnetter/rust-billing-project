@@ -63,8 +63,15 @@ impl Bills {
         self.inner.remove(name).is_some()
     }
 
-    fn update(&mut self, name: &str, amount: f64) {
-        self.inner[name] = Bill {(name.to_owned()), amount};
+    fn update(&mut self, name: &str, amount: f64) -> bool {
+        // get_mut() returns an Option with a mutable reference to the HashMap entry.
+        match self.inner.get_mut(name) {
+            Some(bill) => {
+                bill.amount = amount;
+                true
+            }
+            None => false,
+        }
     }
 }
 
@@ -146,25 +153,31 @@ mod menu {
         }
 
         println!("Name of Bill to update? ");
-        let bill_name = match get_selection() {
+        let name = match get_selection() {
             Some(name) => name,
             None => return,
         };
 
-        println!("Enter new amount for bill {bill_name}");
-        let new_amount = match get_bill_amount() {
-            Some(new_amount) => new_amount,
+        println!("Enter new amount for bill {name}");
+        let amount = match get_bill_amount() {
+            Some(amount) => amount,
             None => return,
         };
-        println!("Updated bill amount for {bill_name} will be {:?}", new_amount);
-        println!("Confirm? [y/n]");
-        match get_selection().unwrap().to_lowercase().as_str() {
-            "y" => {
-                println!("Confirmed");
-                bills[bill_name] = new_amount;
-            }
-            _ => println!("Discarding changes."),
+
+        if bills.update(&name, amount) {
+            println!("Bill {name} updated");
+        } else {
+            println!("Bill {name} not found.")
         }
+        // println!("Updated bill amount for {name} will be {:?}", amount);
+        // println!("Confirm? [y/n]");
+        // match get_selection().unwrap().to_lowercase().as_str() {
+        //     "y" => {
+        //         println!("Confirmed");
+        //         bills[name] = amount;
+        //     }
+        //     _ => println!("Discarding changes."),
+        // }
     }
 }
 
