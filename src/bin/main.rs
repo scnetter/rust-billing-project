@@ -62,6 +62,10 @@ impl Bills {
         // is_some will return true if there was a value or false if not
         self.inner.remove(name).is_some()
     }
+
+    fn update(&mut self, name: &str, amount: f64) {
+        self.inner[name] = Bill {(name.to_owned()), amount};
+    }
 }
 
 fn get_selection() -> Option<String> {
@@ -135,12 +139,40 @@ mod menu {
             println!("No bill named {bill_name} found.");
         }
     }
+
+    pub fn update_bill(bills: &mut Bills) {
+        for bill in bills.get_all() {
+            println!("{:?}", bill);
+        }
+
+        println!("Name of Bill to update? ");
+        let bill_name = match get_selection() {
+            Some(name) => name,
+            None => return,
+        };
+
+        println!("Enter new amount for bill {bill_name}");
+        let new_amount = match get_bill_amount() {
+            Some(new_amount) => new_amount,
+            None => return,
+        };
+        println!("Updated bill amount for {bill_name} will be {:?}", new_amount);
+        println!("Confirm? [y/n]");
+        match get_selection().unwrap().to_lowercase().as_str() {
+            "y" => {
+                println!("Confirmed");
+                bills[bill_name] = new_amount;
+            }
+            _ => println!("Discarding changes."),
+        }
+    }
 }
 
 enum MainMenu {
     AddBill,
     ViewBill,
     RemoveBill,
+    UpdateBill
 }
 
 impl MainMenu {
@@ -149,6 +181,7 @@ impl MainMenu {
         "1" => Some(Self::AddBill),
         "2" => Some(Self::ViewBill),
         "3" => Some(Self::RemoveBill),
+        "4" => Some(Self::UpdateBill),
         _ => None,
         }
     }
@@ -159,6 +192,7 @@ impl MainMenu {
         println!("1. Add Bill");
         println!("2. View Bill");
         println!("3. Remove Bill");
+        println!("4. Update Bill");
         println!("");
         println!("Enter Selection: ");
     }
@@ -176,6 +210,7 @@ fn main() {
             Some(MainMenu::AddBill) => menu::add_bill(&mut bills),
             Some(MainMenu::ViewBill) => menu::view_bills(&bills),
             Some(MainMenu::RemoveBill) => menu::remove_bill(&mut bills),
+            Some(MainMenu::UpdateBill) => menu::update_bill(&mut bills),
             None => return,
         }
     }
