@@ -82,7 +82,7 @@ fn get_bill_amount() -> Option<f64> {
             return None;
         }
         // parse() will attempt to convert string to correct Result type
-        let parsed_input: Result<f64, _> = input.parse();
+        let parsed_input: Result<f64, _> = input.parse::<f64>();
         match parsed_input {
             Ok(amount) => return Some(amount),
             Err(_) => println!("Please enter a valid number."),
