@@ -1,3 +1,4 @@
+use std::hash::Hash;
 // Project 1: Interactive bill manager
 //
 // Summary:
@@ -29,6 +30,7 @@
 // * A vector is the easiest way to store the bills at stage 1, but a
 //   hashmap will be easier to work with at stages 2 and 3.
 use std::io;
+use std::collections::HashMap;
 #[derive(Debug, Clone)]
 pub struct Bill {
     name: String,
@@ -36,22 +38,22 @@ pub struct Bill {
 }
 
 pub struct Bills {
-    inner: Vec<Bill>,
+    inner: HashMap<String, Bill>,
 }
 
 impl Bills {
     fn new() -> Self {
         Self {
-            inner: vec![]
+            inner: HashMap::new()
         }
     }
 
     fn add(&mut self, bill: Bill) {
-        self.inner.push(bill);
+        self.inner.insert(bill.name.to_string(), bill);
     }
 
     // Returns a vector containing borrowed references to bills
-    fn get_all(&self) -> Vec<&Bill> {
+    fn get_all(&self) -> HashMap<&String, &Bill> {
         // collect will return a new vector with references to the original Bills
         self.inner.iter().collect()
     }
