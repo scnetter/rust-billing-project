@@ -86,7 +86,6 @@ fn get_bill_amount() -> Option<f64> {
             Ok(amount) => return Some(amount),
             Err(_) => println!("Please enter a valid number."),
         }
-        
     }
 }
 
@@ -105,6 +104,13 @@ mod menu {
         };
         let bill = Bill {name, amount};
         bills.add(bill);
+    }
+
+    pub fn view_bills(bills: &Bills) {
+        for bill in bills.get_all() {
+            // update later to pretty up
+            println!("{:?}", bill);
+        }
     }
 }
 
@@ -133,7 +139,7 @@ impl MainMenu {
 }
 
 fn main() {
-    let mut bills: Vec<Bill> = vec![];
+    let mut bills = Bills::new();
 
     loop {
         MainMenu::show();
@@ -141,8 +147,8 @@ fn main() {
         let input = get_selection().expect("No data entered");
 
         match MainMenu::from_str(input.as_str()) {
-            Some(MainMenu::AddBill) => (),
-            Some(MainMenu::ViewBill) => (),
+            Some(MainMenu::AddBill) => menu::add_bill(&mut bills),
+            Some(MainMenu::ViewBill) => menu::view_bills(&bills),
             None => return,
         }
     }
