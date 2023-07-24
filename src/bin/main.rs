@@ -1,3 +1,4 @@
+use core::num::dec2flt::parse;
 // Project 1: Interactive bill manager
 //
 // Summary:
@@ -31,22 +32,8 @@
 use std::io;
 #[derive(Debug, Clone)]
 pub struct Bill {
-    bill_name: String,
-    bill_amount: f64,
-}
-
-impl Bill {
-
-    fn new(bill_name: String, bill_amount: f64) -> Self {
-        Bill {
-            bill_name,
-            bill_amount,
-        }
-    }
-    fn display(&self) {
-        println!("{} - ${}", self.bill_name, self.bill_amount);
-    }
-
+    name: String,
+    amount: f64,
 }
 
 pub struct Bills {
@@ -81,6 +68,44 @@ fn get_selection() -> Option<String> {
         None
     } else {
         Some(input)
+    }
+}
+
+fn get_bill_amount() -> Option<f64> {
+    println!("Amount: ");
+    loop {
+        let input = match get_selection() {
+            Some(input) => input,
+            None => return None,
+        };
+        if &input == "" {
+            return None;
+        }
+        // parse() will attempt to convert string to correct Result type
+        let parsed_input: Result<f64, _> = input.parse();
+        match parsed_input {
+            Ok(amount) => return Some(amount),
+            Err(_) => println!("Please enter a valid number."),
+        }
+        
+    }
+}
+
+mod menu {
+    use crate::{Bills, Bill, get_selection, get_bill_amount};
+
+    pub fn add_bill(bills: &mut Bills) {
+        println!("Bill name:");
+        let name = match get_selection() {
+            Some(input) => input,
+            None  => return,
+        };
+        let amount = match get_bill_amount() {
+            Some(amount) => amount,
+            None  => return,
+        };
+        let bill = Bill {name, amount};
+        bills.add(bill);
     }
 }
 
@@ -122,10 +147,5 @@ fn main() {
             None => return,
         }
     }
-    bills.push(Bill::new("Insurance".to_owned(), 324.00));
-    bills.push(Bill::new("Mortgage".to_owned(), 1575.00));
 
-    for bill in bills {
-        bill.display();
-    }
 }
