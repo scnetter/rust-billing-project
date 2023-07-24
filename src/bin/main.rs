@@ -53,9 +53,14 @@ impl Bills {
     }
 
     // Returns a vector containing borrowed references to bills
-    fn get_all(&self) -> HashMap<&String, &Bill> {
+    fn get_all(&self) -> Vec<&Bill> {
         // collect will return a new vector with references to the original Bills
-        self.inner.iter().collect()
+        self.inner.values().collect()
+    }
+
+    fn remove(&mut self, name: &str) -> bool {
+        // is_some will return true if there was a value or false if not
+        self.inner.remove(name).is_some()
     }
 }
 
@@ -114,11 +119,28 @@ mod menu {
             println!("{:?}", bill);
         }
     }
+
+    pub fn remove_bill(bills: &mut Bills) {
+        for bill in bills.get_all() {
+            println!("{:?}", bill);
+        }
+        println!("Name of Bill to remove? ");
+        let bill_name = match get_selection() {
+            Some(name) => name,
+            None => return,
+        };
+        if bills.remove(&bill_name) {
+            println!("{bill_name} removed.");
+        } else {
+            println!("No bill named {bill_name} found.");
+        }
+    }
 }
 
 enum MainMenu {
     AddBill,
     ViewBill,
+    RemoveBill,
 }
 
 impl MainMenu {
@@ -126,6 +148,7 @@ impl MainMenu {
         match input {
         "1" => Some(Self::AddBill),
         "2" => Some(Self::ViewBill),
+        "3" => Some(Self::RemoveBill),
         _ => None,
         }
     }
@@ -135,6 +158,7 @@ impl MainMenu {
         println!(" == Bill Manager ==");
         println!("1. Add Bill");
         println!("2. View Bill");
+        println!("3. Remove Bill");
         println!("");
         println!("Enter Selection: ");
     }
@@ -151,6 +175,7 @@ fn main() {
         match MainMenu::from_str(input.as_str()) {
             Some(MainMenu::AddBill) => menu::add_bill(&mut bills),
             Some(MainMenu::ViewBill) => menu::view_bills(&bills),
+            Some(MainMenu::RemoveBill) => menu::remove_bill(&mut bills),
             None => return,
         }
     }
