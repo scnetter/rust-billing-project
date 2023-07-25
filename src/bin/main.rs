@@ -107,6 +107,24 @@ fn get_bill_amount() -> Option<f64> {
     }
 }
 
+fn run_program() -> Option<()> {
+    let mut bills = Bills::new();
+
+    loop {
+        MainMenu::show();
+
+        let input = get_selection()?;
+        match MainMenu::from_str(input.as_str()) {
+            Some(MainMenu::AddBill) => menu::add_bill(&mut bills),
+            Some(MainMenu::ViewBill) => menu::view_bills(&bills),
+            Some(MainMenu::RemoveBill) => menu::remove_bill(&mut bills),
+            Some(MainMenu::UpdateBill) => menu::update_bill(&mut bills),
+            None => break,
+        }
+    }
+    None
+}
+
 mod menu {
     use crate::{Bills, Bill, get_selection, get_bill_amount};
 
@@ -212,20 +230,5 @@ impl MainMenu {
 }
 
 fn main() {
-    let mut bills = Bills::new();
-
-    loop {
-        MainMenu::show();
-
-        let input = get_selection().expect("No data entered");
-
-        match MainMenu::from_str(input.as_str()) {
-            Some(MainMenu::AddBill) => menu::add_bill(&mut bills),
-            Some(MainMenu::ViewBill) => menu::view_bills(&bills),
-            Some(MainMenu::RemoveBill) => menu::remove_bill(&mut bills),
-            Some(MainMenu::UpdateBill) => menu::update_bill(&mut bills),
-            None => return,
-        }
-    }
-
+    run_program();
 }
